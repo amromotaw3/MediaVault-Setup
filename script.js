@@ -41,16 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+  // ─── OS Detection ──────────────────────────────────────────────────────────
+  const getOS = () => {
+    const userAgent = window.navigator.userAgent;
+    const platform = window.navigator.platform;
+    const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+    const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+    const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+
+    if (macosPlatforms.indexOf(platform) !== -1) return 'Mac';
+    if (iosPlatforms.indexOf(platform) !== -1) return 'iOS';
+    if (windowsPlatforms.indexOf(platform) !== -1) return 'Windows';
+    if (/Android/.test(userAgent)) return 'Android';
+    if (/Linux/.test(platform)) return 'Linux';
+
+    return 'Unknown';
+  };
+
+  const userOS = getOS();
+  console.log(`[MediaVault] Detected OS: ${userOS}`);
+
   // ─── Auto-Versioning Logic (GitHub API) ───────────────────────────────────
   const setupAutoVersioning = async () => {
     try {
-      // Fetch the latest release info from GitHub
       const repo = 'amromotaw3/MediaVault-Setup';
       const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
-      if (!response.ok) return;
-      const release = await response.json();
+      if (!response.ok) throw new Error('GitHub API request failed');
       
-      // tag_name is usually "v8.5.1", we can extract the number or use it as is
+      const release = await response.json();
       const version = release.tag_name.replace(/^v/, ''); 
 
       // 1. Update Version Badge
@@ -59,20 +77,30 @@ document.addEventListener('DOMContentLoaded', () => {
         badge.textContent = `MEDIAVAULT V${version} IS HERE`;
       }
 
-      // 2. Update Download Links (Search for the EXE in assets)
-      const winAsset = release.assets.find(a => a.name.endsWith('.exe') && !a.name.includes('Setup'));
-      const setupAsset = release.assets.find(a => a.name.endsWith('.exe') && a.name.includes('Setup'));
+      const winAsset = release.assets.find(a => a.name.toLowerCase().endsWith('.exe'));
+      const apkAsset = release.assets.find(a => a.name.toLowerCase().endsWith('.apk'));
       
-      const downloadLinks = document.querySelectorAll('.download-link');
-      downloadLinks.forEach(link => {
-        // Default fallback if assets aren't found specifically
-        let downloadUrl = `https://github.com/${repo}/releases/download/v${version}/MediaVault-Setup-${version}.exe`;
-        
-        // Use the actual direct URL from GitHub Assets if available
-        if (setupAsset) downloadUrl = setupAsset.browser_download_url;
-        
-        link.href = downloadUrl;
-      });
+      const winBtn = document.getElementById('download-win');
+      const androidBtn = document.getElementById('download-android');
+
+      // 3. Update Hero Buttons
+      if (winBtn && winAsset) {
+        winBtn.href = winAsset.browser_download_url;
+      }
+      
+      if (androidBtn && apkAsset) {
+        androidBtn.href = apkAsset.browser_download_url;
+      }
+
+      // 5. Highlight OS-specific button
+      if (userOS === 'Android' && androidBtn) {
+        androidBtn.classList.remove('btn-secondary');
+        androidBtn.classList.add('btn-primary');
+        if (winBtn) {
+          winBtn.classList.remove('btn-primary');
+          winBtn.classList.add('btn-secondary');
+        }
+      }
       
       console.log(`[Auto-Version] Site synced with GitHub Release v${version}`);
     } catch (err) {
