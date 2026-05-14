@@ -1,14 +1,14 @@
 :root {
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-  --bg-dark: #ffffff;
-  --bg-surface: #f8fafc;
+  --bg-dark: #07070a;
+  --bg-surface: #0f0f13;
   --accent: #6366f1;
   --accent-secondary: #a855f7;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --glass: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(0, 0, 0, 0.05);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b8;
+  --text-muted: #64748b;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
   --radius-lg: 24px;
   --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   --nav-height: 80px;
@@ -120,16 +120,28 @@ body {
   position: absolute;
   width: 600px;
   height: 600px;
-  background: var(--accent);
-  filter: blur(140px);
   border-radius: 50%;
-  opacity: 0.15;
+  opacity: 0.1;
   animation: float 20s infinite alternate;
+  will-change: transform;
 }
 
-.blob-1 { top: -10%; left: -10%; background: var(--accent); }
-.blob-2 { bottom: -10%; right: -10%; background: var(--accent-secondary); animation-delay: -5s; }
-.blob-3 { top: 40%; left: 30%; width: 400px; height: 400px; background: #4f46e5; opacity: 0.1; animation-duration: 25s; }
+.blob-1 { 
+  top: -10%; left: -10%; 
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%); 
+}
+.blob-2 { 
+  bottom: -10%; right: -10%; 
+  background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%); 
+  animation-delay: -5s; 
+}
+.blob-3 { 
+  top: 40%; left: 30%; 
+  width: 400px; height: 400px; 
+  background: radial-gradient(circle, #4f46e5 0%, transparent 70%); 
+  opacity: 0.08; 
+  animation-duration: 25s; 
+}
 
 @keyframes float {
   0% { transform: translate(0, 0) scale(1); }
@@ -177,9 +189,8 @@ h1, h2, h3 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: var(--glass);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(10px);
   padding: 6px 16px;
   border-radius: 100px;
   font-size: 13px;
@@ -309,8 +320,7 @@ h1, h2, h3 {
   display: flex;
   justify-content: flex-end;
   animation: heroSlideIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  /* Shared Glow to Unify Devices */
-  filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.15));
+  will-change: transform, opacity;
 }
 
 /* ═══ Shared Device Styles ═══ */
@@ -418,11 +428,10 @@ h1, h2, h3 {
 }
 
 .feature-card {
-  background: var(--glass);
+  background: var(--bg-surface);
   border: 1px solid var(--glass-border);
   padding: 40px;
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(20px);
   transition: var(--transition-smooth);
   position: relative;
   overflow: hidden;
@@ -500,10 +509,9 @@ footer {
 }
 
 .footer-logo {
-  height: 140px;
+  height: 60px;
   margin-bottom: 24px;
-  opacity: 0.9;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+  opacity: 0.8;
 }
 
 
